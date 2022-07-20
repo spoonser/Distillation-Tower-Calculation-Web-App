@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+	<div class="fixed-page">
+
+		<div id="upload-portion">
+			<h2>Upload Files</h2>
+			<div id="upload-box">
+				<form id='user-file-form' method="POST" enctype=multipart/form-data>
+					<input type="file" id="user-file" name="user-file" accept=".csv"><br>
+					<input type="submit" value="Upload Selected File (.csv only)">
+				</form>
+			</div>
+
+			<!-- Appear on successful upload of file -->
+			<br><br>
+			<div class="center-content">
+				{% if session['data'] %}
+					<h3>File Successfully Uploaded</h3>
+					<p>File: {{ session['filename'] }}</p>
+				{% else %}	
+					<p>No file uploaded</p>
+				{% endif %}
+				
+				{% if session['data'] %}
+					<br>
+					<form action="{{ url_for('graph') }}">
+						<input type="submit" value="Make Graphs with Your Data"/>		
+					</form>
+
+					<br>
+					<form action="{{ url_for('stats') }}">
+
+						<input type="submit" value="Get Statistics from Your Data"/>
+					</form>	
+				{% endif %}
+			</div>
+		</div>
+
+
+			<br><br>
+			<div id="index-parse">
+				<h2>Microservice Interaction</h2>
+				<form action="{{ url_for('parse') }}">
+					<input type="submit" value="Text Analytics"/>
+					Input text data and see analytics
+				</form>
+			</div>
+
+
+	</div>	
+
+{% endblock %}
