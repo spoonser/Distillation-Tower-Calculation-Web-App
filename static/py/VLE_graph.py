@@ -42,8 +42,8 @@ def graph_init(x_sep, y_sep):
 	plt.ylim([0, 1])
 
 	# Label graph
-	plt.xlabel('Mole Fraction of Component in Liquid', fontsize=18, fontname='Liberation Serif')
-	plt.ylabel('Mole Fraction of Component in Vapor', fontsize=18, fontname='Liberation Serif')
+	plt.xlabel('Mole Fraction of Lighter Component in Liquid', fontsize=18, fontname='Liberation Serif')
+	plt.ylabel('Mole Fraction of Lighter Component in Vapor', fontsize=18, fontname='Liberation Serif')
 	plt.xticks(fontsize=15, fontname='Liberation Serif')
 	plt.yticks(fontsize=15, fontname='Liberation Serif')
 

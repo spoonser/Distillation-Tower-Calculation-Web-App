@@ -1,4 +1,4 @@
-# Distillation Tower Cost Minimization Web Application
+# Distillation Tower Calculator Web Application
 
 Complete overhaul of a standalone series of python scripts written in 2019 for 
 a chemical engineering course. This project aims to modularize that code, 
