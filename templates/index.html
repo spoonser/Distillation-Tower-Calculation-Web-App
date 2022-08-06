@@ -5,23 +5,73 @@
 {% endblock %}
 {% block content %}
 	<div class="fixed-page">
+		<div class="page-content">
+			<div class="dist-child">
+				<label for="components">Components of Distillation</label><br>
+				<select name="components" id="components">
+					<option value="no-components"> ------------------- </option>
 
-		<div id="upload-portion">
-			<h2>Upload Files</h2>
-			<div id="upload-box">
-				<form id='user-file-form' method="POST" enctype=multipart/form-data>
-					<input type="file" id="user-file" name="user-file" accept=".csv"><br>
-					<input type="submit" value="Upload Selected File (.csv only)">
-				</form>
+				</select><br><br>
+				<label for="mole_frac_feed">Mole Fraction in Feed (X<sub>F</sub>)</label><br>
+				<input type="text" id="mole_frac_feed" name="mole_frac_feed"><br><br>
+
+				<label for="mole_frac_dist">Mole Fraction in Distillate (X<sub>D)</sub></label><br>
+				<input type="text" id="mole_frac_dist" name="mole_frac_dist"><br><br>
+
+				<label for="mole_frac_bot">Mole Fraction in Bottoms (X<sub>B</sub>)</label><br>
+				<input type="text" id="mole_frac_bot" name="mole_frac_bot"><br><br>
+
+				<label for="reflux_ratio">Reflux Ratio (R)</label><br>
+				<input type="text" id="reflux_ratio" name="reflux_ratio"><br><br>
+
+				<label for="quality">Quality (q)</label><br>
+				<input type="text" id="quality" name="quality"><br><br>
 			</div>
 
-			<!-- Appear on successful upload of file -->
-			<br><br>
-			<div class="center-content">
-
+			<div class="dist-child">
+				<img id="dist-diagram" src="{{url_for('static', filename='images/dist_column.png')}}" alt="https://en.wikipedia.org/wiki/Fractionating_column"
+				width="auto"
+				height="400"/>
 			</div>
+
+			<div class="submit">
+				<form action="" method="post">
+					<button name="submit" value="calculate">Calculate</button>
+				</form>			
+			</div>
+
+
+
+			<!-- Modal for displaying graph -->
+			<div id="graph-modal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Your Graph</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							{{ plot | safe }}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+				<!-- JQuery to call open the modal when the graph is created  -->
+			<script>
+				{% if graph_requested %}
+					$(document).ready(function(){
+						$("#graph-modal").modal('show');
+					});
+				{% endif %}
+			</script>
+
 		</div>
-
 	</div>	
 
 {% endblock %}

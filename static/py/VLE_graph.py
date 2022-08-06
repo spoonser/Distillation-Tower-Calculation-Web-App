@@ -11,6 +11,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+import io
+import base64
 
 
 # Import data
@@ -30,7 +32,7 @@ def import_data(data):
 
 
 # Function to set up the graph
-def graph_init(x_sep, y_sep):
+def init_graph(x_sep, y_sep):
 	"""
 	Draws the plot with the separation data of the two components at
 	vapor-liquid equilibrium
@@ -68,7 +70,7 @@ def draw_q(q, xF):
 	return q_line
 
 
-def enriching_stripping(R, q_line, xD, xW):
+def enriching_stripping(R, q_line, xD, xB):
 	"""
 	Solves for and draws the enriching and stripping lines on the plot
 	"""
@@ -87,8 +89,8 @@ def enriching_stripping(R, q_line, xD, xW):
 	plt.plot(enr_x, enr_y)
 
 	# Calculate stripping line 
-	strip_x = [xW, intersect]
-	strip_y = [xW, np.polyval(enr_line, intersect)]
+	strip_x = [xB, intersect]
+	strip_y = [xB, np.polyval(enr_line, intersect)]
 	strip_line = np.polyfit(strip_x, strip_y, 1)
 
 	# Plot stripping line
@@ -98,7 +100,7 @@ def enriching_stripping(R, q_line, xD, xW):
 	return enr_line, strip_line
 
 
-def distillation_stages(x_sep, y_sep, xW, xD, enr_line, strip_line):
+def distillation_stages(x_sep, y_sep, xB, xD, enr_line, strip_line):
 	"""
 	This performs the McCabe-Thiele method for drawing the number of stages
 	required to meet the process requirements. 
@@ -119,9 +121,13 @@ def distillation_stages(x_sep, y_sep, xW, xD, enr_line, strip_line):
 				break
 	
 		nstage += 1
+
+		# Break out of calculation if number of stages is too high
+		if nstage > 100:
+			return nstage
 		# Exit condition: the stages have been drawn past the point where
 		# process requirements are met, return number of stages needed
-		if x_current < xW:
+		if x_current < xB:
 			return nstage
 
 		y_enr_check = np.polyval(enr_line, x_current)
@@ -137,8 +143,45 @@ def distillation_stages(x_sep, y_sep, xW, xD, enr_line, strip_line):
 			y_current = y_strip_check
 
 
+def serve_graph():
+	plt.savefig(img, format='png')
+	img.seek(0)
+
+	# Encodes png graph as 64 bit image
+	plot_url = base64.b64encode(img.getvalue()).decode()
+
+	return plot_url
+
+
 def calc_nstages(nstage, efficiency):
 	"""
 	Calculates the number of stages needed considering efficiency of each tray
 	"""
 	return math.ceil(nstage/efficiency)
+
+
+def do_graph(VLE_data, xF, xD, xB, R, q):
+	"""
+	Performs the VLE calculations using the VLE data and parameters provided
+	"""
+	# Get the x and y component separation data
+	x_sep, y_sep = import_data(VLE_data)
+
+	# Initialize the graph
+	init_graph(x_sep, y_sep)
+
+	# Draw the q line and get the equation for said line
+	q_line = draw_q(q, xF)
+
+	# Draw the enriching and stripping lines and the equation for both
+	enr_line, strip_line = enriching_stripping(R, q_line, xD, xB)
+
+	# Draw the number of distillation stages required and get the number of stages
+	nstage = distillation_stages(x_sep, y_sep, xB, xD, enr_line, strip_line)
+
+	# Return the encoded graph and the number of stages required to the user
+	if nstage < 100:
+		return serve_graph(), nstage
+	# Something is wrong with the parameters, return an error
+	else:
+		return "Calculation error"
