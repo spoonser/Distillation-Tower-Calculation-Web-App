@@ -7,13 +7,15 @@
 # ***************************************************************************
 
 #Import required packages
-import pandas as pd
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+import numpy.polynomial.polynomial as poly
+from matplotlib import cm
+from pandas.core.base import DataError
 import numpy as np
+import pandas as pd
 import math
 import io
 import base64
-
 
 # Import data
 def import_data(data):
@@ -24,11 +26,14 @@ def import_data(data):
 	VLE_Data = pd.read_csv(data)
 	VLE_Data = VLE_Data.values
 
-	# 
+	# Grab the first and second columns
 	x_sep = VLE_Data[:, 0]
 	y_sep = VLE_Data[:, 1]
 
-	return x_sep, y_sep
+	coefs = poly.polyfit(x_sep, y_sep, 10)
+	x_new = [1 / 5000 * i for i in range(5000)]
+	ffit = poly.polyval(x_new, coefs)
+	return x_new, ffit
 
 
 # Function to set up the graph
@@ -44,10 +49,10 @@ def init_graph(x_sep, y_sep):
 	plt.ylim([0, 1])
 
 	# Label graph
-	plt.xlabel('Mole Fraction of Lighter Component in Liquid', fontsize=18, fontname='Liberation Serif')
-	plt.ylabel('Mole Fraction of Lighter Component in Vapor', fontsize=18, fontname='Liberation Serif')
-	plt.xticks(fontsize=15, fontname='Liberation Serif')
-	plt.yticks(fontsize=15, fontname='Liberation Serif')
+	plt.xlabel('Mole Fraction of X in Liquid', fontsize=18, fontname='Liberation Serif')
+	plt.ylabel('Mole Fraction of X in Vapor', fontsize=18, fontname='Liberation Serif')
+	plt.xticks(fontsize=12)
+	plt.yticks(fontsize=12)
 
 
 
@@ -81,7 +86,7 @@ def enriching_stripping(R, q_line, xD, xB):
 	enr_line = np.polyfit(enr_x, enr_y, 1)
 
 	# Find the point where the enriching line and q line intersect
-	intersect = np.roots(q_line - enr_line)
+	intersect = np.roots(q_line - enr_line)[0]
 	enr_x = [intersect, xD]
 	enr_y = [np.polyval(enr_line, intersect), xD]
 
@@ -144,6 +149,10 @@ def distillation_stages(x_sep, y_sep, xB, xD, enr_line, strip_line):
 
 
 def serve_graph():
+	"""
+	Returns a base64 encoded image of the plot to the user
+	"""
+	img = io.BytesIO()
 	plt.savefig(img, format='png')
 	img.seek(0)
 
@@ -171,12 +180,15 @@ def do_graph(VLE_data, xF, xD, xB, R, q):
 	init_graph(x_sep, y_sep)
 
 	# Draw the q line and get the equation for said line
+	plt.figure(1)
 	q_line = draw_q(q, xF)
 
 	# Draw the enriching and stripping lines and the equation for both
+	plt.figure(1)
 	enr_line, strip_line = enriching_stripping(R, q_line, xD, xB)
 
 	# Draw the number of distillation stages required and get the number of stages
+	plt.figure(1)
 	nstage = distillation_stages(x_sep, y_sep, xB, xD, enr_line, strip_line)
 
 	# Return the encoded graph and the number of stages required to the user
@@ -184,4 +196,4 @@ def do_graph(VLE_data, xF, xD, xB, R, q):
 		return serve_graph(), nstage
 	# Something is wrong with the parameters, return an error
 	else:
-		return "Calculation error"
+		return "Error", "Error"
