@@ -16,7 +16,7 @@ import pandas as pd
 import io
 import base64
 
-from database.extensions import db
+# from database.extensions import db
 
 # Using environment variables on Flip to store our DB credentials. 
 import os
