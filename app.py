@@ -6,7 +6,8 @@
 
 # Basic Flask functionality, importing modules for parsing results and accessing MySQL. 
 
-from flask import Flask, render_template, request, json, flash, redirect, url_for, session
+from flask import Flask, render_template, request, json, flash, redirect, url_for
+from flask_login import login_user, logout_user
 import matplotlib.pyplot as plt
 import static.py.VLE_graph as vle
 from matplotlib import cm
@@ -14,6 +15,8 @@ import numpy as np
 import pandas as pd
 import io
 import base64
+
+from database.extensions import db
 
 # Using environment variables on Flip to store our DB credentials. 
 import os
@@ -50,7 +53,7 @@ def upload_file():
 # Register user
 # -------------------------------------------------------------------------------------------------
 @app.route('/register')
-def index():
+def register():
     return render_template('register.html')   
 
 
@@ -58,7 +61,7 @@ def index():
 # Login page
 # -------------------------------------------------------------------------------------------------
 @app.route('/login')
-def index():
+def login():
     return render_template('login.html')   
 
 if __name__ == "__main__":
