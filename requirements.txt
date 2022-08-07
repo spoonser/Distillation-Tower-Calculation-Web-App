@@ -10,4 +10,5 @@ numpy>=1.1
 matplotlib>=1.1
 pandas>=1.1
 requests>=2.25.0
+SQLAlchemy>=1.4.17
 psycopg2>=2.8.6
