@@ -1,7 +1,7 @@
 Jinja2>=3.0
 Click>=7.1.2
 Flask>=2.0.1
-flask_login>=1.1.1
+flask_login>=0.6.0
 itsdangerous>=2.0
 MarkupSafe>=1.1.1
 Werkzeug>=2.0
