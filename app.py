@@ -21,8 +21,6 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = "NOT_A_SECRET" 
-
 
 
 # -------------------------------------------------------------------------------------------------
@@ -47,6 +45,21 @@ def upload_file():
             plot = '<img class="img-responsive" src="data:image/png;base64,{}">'.format(vle_plot_url)
             return render_template('index.html', plot=plot, graph_requested=True, nstage=nstage)
 
+
+# -------------------------------------------------------------------------------------------------
+# Register user
+# -------------------------------------------------------------------------------------------------
+@app.route('/register')
+def index():
+    return render_template('register.html')   
+
+
+# -------------------------------------------------------------------------------------------------
+# Login page
+# -------------------------------------------------------------------------------------------------
+@app.route('/login')
+def index():
+    return render_template('login.html')   
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
