@@ -16,12 +16,12 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
 from database.extensions import db
-from database.create import create_tables
+from database.setup import drop_and_create_tables
 
 # Set up application and the necessary environment variables
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.config['DATABASE_URL'] = os.environ.get('DATABASE_URL')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///distillation'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Connect to database
@@ -55,7 +55,6 @@ def upload_file():
 # -------------------------------------------------------------------------------------------------
 @app.route('/register')
 def register():
-    create_tables()
     return render_template('register.html')   
 
 
