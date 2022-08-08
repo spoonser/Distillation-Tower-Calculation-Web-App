@@ -15,18 +15,17 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy 
 from werkzeug.utils import secure_filename
 
-# Create tables function - delete probs
+from database.extensions import db
 from database.create import create_tables
 
 # Set up application and the necessary environment variables
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['DATABASE_URL'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Connect to database
-login_manager = LoginManager()
-db = SQLAlchemy(app)
-db.init_app(app)
+db.init_app(app=app)
 
 # -------------------------------------------------------------------------------------------------
 # Main Index page 
