@@ -20,9 +20,16 @@
         <ul id="page-select">
           <li><a href="/">Home</a></li>
 
-          <!-- This should disappear if a user is logged in -->
+          <!-- This should appear if no user is logged in -->
+          {% if not current_user.is_authenticated %}
           <li><a href="/register">Register</a></li>
           <li><a href="/login">Login</a></li>
+          {% endif %}
+          
+          <!-- This should appear if a user is logged in -->
+          {% if current_user.is_authenticated %}
+          <li><a href="/upload">Upload</a></li>
+          {% endif %}
         </ul>
       </div>
     </div>

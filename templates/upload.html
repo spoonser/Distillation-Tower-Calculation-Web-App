@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+<!-- Mostly sourced from https://github.com/PrettyPrinted -->
+	<div class="fixed-page">
+		<div class="page-content">
+      <div class="page-header">
+        <h1>Upload Data</h1>
+      </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="well bs-component">
+              <form class="form-horizontal" method="POST" action="{{ url_for('upload') }}">
+                <fieldset>
+                  <div class="form-group">
+                    <label for="inputComponent1" class="col-lg-2 control-label">Component 1 Name</label>
+                    <div class="col-lg-10">
+                      <input type="text" class="form-control" name="component1" id="component1" placeholder="Component 1">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputComponent2" class="col-lg-2 control-label">Component 2 Name</label>
+                    <div class="col-lg-10">
+                      <input type="text" class="form-control" name="component2" id="component2" placeholder="Component 2">
+                    </div>
+                  </div>
+
+	                  <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+											<input type="file" id="user-file" name="user-file" accept=".csv"><br>
+                    </div>
+                  <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                      <button type="submit" class="btn btn-primary">Upload</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+	</div>
+{% endblock %}

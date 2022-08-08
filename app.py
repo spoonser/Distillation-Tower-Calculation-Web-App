@@ -7,7 +7,7 @@
 # Basic Flask functionality, importing modules for parsing results and accessing MySQL. 
 
 from flask import Flask, render_template, request, json, flash, redirect, url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 import matplotlib.pyplot as plt
 import static.py.VLE_graph as vle
 import os
@@ -35,7 +35,10 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return None
+    try:
+        return User.query.get(user_id)
+    except:
+        return None
 
 # -------------------------------------------------------------------------------------------------
 # Main Index page 
@@ -103,6 +106,17 @@ def login():
             return redirect(url_for('index'))
 
     return render_template('login.html')   
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    return render_template('upload.html')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
