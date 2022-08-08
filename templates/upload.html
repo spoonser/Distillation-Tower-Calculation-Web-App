@@ -13,7 +13,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="well bs-component">
-              <form class="form-horizontal" method="POST" action="{{ url_for('upload') }}">
+              <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}">
                 <fieldset>
                   <div class="form-group">
                     <label for="inputComponent1" class="col-lg-2 control-label">Component 1 Name</label>

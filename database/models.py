@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
 # Molecular component database model
 class Component(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String(50))
+	name = db.Column(db.String(50), unique=True)
 
 
 # VLE data table
@@ -30,8 +30,9 @@ class VleData(db.Model):
 	__table_args__ = (
 		db.CheckConstraint('component1_id != component2_id'),
 	)
+	id = db.Column(db.Integer, primary_key=True)
 	component1_id = db.Column(db.Integer, db.ForeignKey('component.id'))
 	component2_id = db.Column(db.Integer, db.ForeignKey('component.id'))
-	point = db.Column(db.String(50), primary_key=True)
+	point = db.Column(db.String(50))
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 

@@ -8,6 +8,8 @@
 
 from flask import Flask, render_template, request, json, flash, redirect, url_for, g
 from flask_login import login_user, logout_user, current_user
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import static.py.VLE_graph as vle
 import os
@@ -18,7 +20,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 
 from database.extensions import db, login_manager
-from database.setup import drop_and_create_tables
+from database.setup import drop_and_create_tables, upload_component, upload_vle
 from database.models import User, Component, VleData
 
 # Set up application and the necessary environment variables
@@ -127,6 +129,51 @@ def logout():
 # -------------------------------------------------------------------------------------------------
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    if request.method == 'POST':
+
+        # Attempt to get files from user
+        if request.files['user-file'].filename != '':
+            component1 = request.form['component1']
+            component2 = request.form['component2']
+            
+            # Don't bother querying if component1 and component2 aren't distinct
+            if component1 == component2:
+                flash('Components must be different from eachother!')
+                return render_template('upload.html')
+
+            # Add components to the components table if they don't exist already
+            if Component.query.filter_by(name=component1).count() == 0:
+                upload_component(component1)
+
+            if Component.query.filter_by(name=component2).count() == 0:
+                upload_component(component2)          
+
+            # Get and convert data to database-ready format
+            data = pd.read_csv(request.files.get('user-file')) 
+            # Add a new column to the data that has the two columns joined
+            # so they can be uploaded to the database
+            data = np.trunc(1000 * data) / 1000 # Truncate floating points
+            
+            # Create new column of strings
+            data['points'] = data[data.columns[0:]].apply(
+                lambda x: ','.join(x.dropna().astype(str)),
+                axis=1
+            ) 
+
+            # Insert data, ensuring the lower component id is in the first
+            # column of the vle_data table
+            component1_id = Component.query.filter_by(name=component1).first().id
+            component2_id = Component.query.filter_by(name=component2).first().id
+
+            if component1_id < component2_id:
+                upload_vle(data, component1_id, component2_id, current_user.get_id())
+            else:
+                upload_vle(data, component2_id, component1_id, current_user.get_id())
+
+            flash("Data successfully uploaded!")
+            return redirect(url_for('upload'))
+
+
     return render_template('upload.html')
 
 
