@@ -10,21 +10,23 @@ from flask import Flask, render_template, request, json, flash, redirect, url_fo
 from flask_login import login_user, logout_user
 import matplotlib.pyplot as plt
 import static.py.VLE_graph as vle
-from matplotlib import cm
-import numpy as np
-import pandas as pd
-import io
-import base64
-
-# from database.extensions import db
-
-# Using environment variables on Flip to store our DB credentials. 
 import os
-
+from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy 
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+# Create tables function - delete probs
+from database.create import create_tables
 
+# Set up application and the necessary environment variables
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Connect to database
+login_manager = LoginManager()
+db = SQLAlchemy(app)
+db.init_app(app)
 
 # -------------------------------------------------------------------------------------------------
 # Main Index page 
@@ -54,6 +56,7 @@ def upload_file():
 # -------------------------------------------------------------------------------------------------
 @app.route('/register')
 def register():
+    create_tables()
     return render_template('register.html')   
 
 
