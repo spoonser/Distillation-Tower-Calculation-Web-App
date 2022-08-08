@@ -166,8 +166,21 @@ def upload():
             component2_id = Component.query.filter_by(name=component2).first().id
 
             if component1_id < component2_id:
+                # Check that data for this combo of components does not exist
+                if (VleData.query.filter_by(component1_id=component1_id).\
+                    filter_by(component2_id=component2_id).first()):
+                    flash('Data for this combination of components already exists')
+                    return render_template('upload.html')
+
                 upload_vle(data, component1_id, component2_id, current_user.get_id())
             else:
+                # Check that data for this combo of components does not exist
+                # Check that data for this combo of components does not exist
+                if (VleData.query.filter_by(component1_id=component2_id).\
+                    filter_by(component1_id=component1_id).first()):
+                    flash('Data for this combination of components already exists')
+                    return render_template('upload.html')
+
                 upload_vle(data, component2_id, component1_id, current_user.get_id())
 
             flash("Data successfully uploaded!")
