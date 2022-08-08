@@ -32,9 +32,18 @@
           <!-- This should appear if a user is logged in -->
           {% if current_user.is_authenticated %}
           <li><a href="/upload">Upload</a></li>
+          <li>
+            <a href="/logout">
+              <button id="logout-button">
+                Logout
+              </button>
+            </a>
+          </li>
           {% endif %}
         </ul>
+
       </div>
+
     </div>
   
     <div class="page-wrapper">
