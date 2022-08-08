@@ -10,6 +10,9 @@
     <!-- Bootstrap core  -->
     <link href="{{ url_for('static', filename='bootstrap-theme.css') }}" rel="stylesheet">
     <title>{% block title %}{% endblock %} - Analytics Application </title>
+
+    <!-- Format flashed messages -->
+    <script type="text/javascript">window.setTimeout("document.getElementById('flash-msg').style.display='none';", 4000); </script>
     {% endblock %}
   </head>
   <body>
@@ -37,6 +40,23 @@
     <div class="page-wrapper">
       <div class="center">
         <div class="center-child">
+
+          <div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                      {% if category == 'message' %}
+                        <div id="flash-msg" class="alert alert-warning" position="fixed" role="alert">
+                      {% else %}
+                        <div id="flash-msg" class="alert alert-{{ category }}" position="fixed" role="alert">
+                      {% endif %}
+                        {{ message }}
+                      </div>
+                  {% endfor %}
+                {% endif %}
+            {% endwith %}
+          </div>
+
           {% block content %}
           {% endblock %}
       </div>
@@ -51,4 +71,4 @@
     </div>
   </body>
 
-</html>
+  </html>

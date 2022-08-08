@@ -81,6 +81,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
+        flash('Successfully created user {}'.format(name))
         return redirect(url_for('login'))
 
     return render_template('register.html')
@@ -99,10 +100,13 @@ def login():
         error_message = ''
 
         if not user or not check_password_hash(user.password, password):
-            error_message = 'Could not login'
+            error_message = "Could not login"
+            flash(error_message)
 
         if not error_message:
             login_user(user)
+            flash("User {} has logged in".format(name))
+
             return redirect(url_for('index'))
 
     return render_template('login.html')   
@@ -111,6 +115,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    flash("Successfully logged out")
     return redirect(url_for('index'))
 
 
