@@ -169,6 +169,9 @@ def do_graph(vle_data, xF, xD, xB, R, q):
 	"""
 	Performs the VLE calculations using the VLE data and parameters provided
 	"""
+	# Clear plot
+	plt.clf()
+
 	# Get the x and y component separation data
 	x_sep, y_sep = get_data(vle_data)
 

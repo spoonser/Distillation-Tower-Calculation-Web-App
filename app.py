@@ -51,14 +51,25 @@ def index():
     components = Component.query.order_by(Component.name).all()
     
     if request.method == 'POST':
-        xF = 0.044504
-        xB = 0.0119526405
-        xD = 0.855676706
-        q = 1.0618231177199156
+        # xF = 0.044504
+        # xB = 0.0119526405
+        # xD = 0.855676706
+        # q = 1.0618231177199156
 
-        VLE_data = get_vle(1, 5)
+        # Get data from form
+        xF = float(request.form['mole_frac_feed'])
+        xD = float(request.form['mole_frac_dist'])
+        xB = float(request.form['mole_frac_bot'])
+        R = float(request.form['reflux_ratio'])
+        q = float(request.form['quality'])
 
-        vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, 3, q) 
+        # Get vle data and query for it
+        component1_id = request.form['component1']
+        component2_id = request.form['component2']
+        VLE_data = get_vle(component1_id, component2_id)
+        
+        # Create plot based on inputs
+        vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, R, q) 
         if vle_plot_url == "Error":
             return index()
         else:

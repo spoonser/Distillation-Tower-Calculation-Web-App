@@ -7,29 +7,40 @@
 	<div class="fixed-page">
 		<div class="page-content">
 			<div class="dist-child">
-				<label for="components">Components of Distillation</label><br>
-				<select name="components" id="components">
-					<option disabled selected value=""> Select First Component </option>
-					{% for component in components %}
-						<option value={{ component.id }}>{{ component.name }}</option>
-					{% endfor %}
+				<form method="POST" id="distill-form" action="">
+					<fieldset>
+						<label for="components">Components of Distillation</label><br>
+						<select name="component1" id="component1">
+							<option disabled selected value=""> Select First Component </option>
+							{% for component in components %}
+								<option value={{ component.id }}>{{ component.name }}</option>
+							{% endfor %}
+						</select><br><br>
+						<select name="component2" id="component2">
+							<option disabled selected value=""> Select Second Component </option>
+							{% for component in components %}
+								<option value={{ component.id }}>{{ component.name }}</option>
+							{% endfor %}
+						</select><br><br>
 
-				</select><br><br>
-				<label for="mole_frac_feed">Mole Fraction in Feed (X<sub>F</sub>)</label><br>
-				<input type="text" id="mole_frac_feed" name="mole_frac_feed"><br><br>
+						<label for="mole_frac_feed">Mole Fraction in Feed (X<sub>F</sub>)</label><br>
+						<input type="text" id="mole_frac_feed" name="mole_frac_feed"><br><br>
 
-				<label for="mole_frac_dist">Mole Fraction in Distillate (X<sub>D)</sub></label><br>
-				<input type="text" id="mole_frac_dist" name="mole_frac_dist"><br><br>
+						<label for="mole_frac_dist">Mole Fraction in Distillate (X<sub>D)</sub></label><br>
+						<input type="text" id="mole_frac_dist" name="mole_frac_dist"><br><br>
 
-				<label for="mole_frac_bot">Mole Fraction in Bottoms (X<sub>B</sub>)</label><br>
-				<input type="text" id="mole_frac_bot" name="mole_frac_bot"><br><br>
+						<label for="mole_frac_bot">Mole Fraction in Bottoms (X<sub>B</sub>)</label><br>
+						<input type="text" id="mole_frac_bot" name="mole_frac_bot"><br><br>
 
-				<label for="reflux_ratio">Reflux Ratio (R)</label><br>
-				<input type="text" id="reflux_ratio" name="reflux_ratio"><br><br>
+						<label for="reflux_ratio">Reflux Ratio (R)</label><br>
+						<input type="text" id="reflux_ratio" name="reflux_ratio"><br><br>
 
-				<label for="quality">Quality (q)</label><br>
-				<input type="text" id="quality" name="quality"><br><br>
-			</div>
+						<label for="quality">Quality (q)</label><br>
+						<input type="text" id="quality" name="quality"><br><br>
+						<button name="submit" value="calculate">Calculate</button>
+					</div>
+				</fieldset>
+			</form>
 
 			<div class="dist-child">
 				<img id="dist-diagram" src="{{url_for('static', filename='images/dist_column.png')}}" alt="https://en.wikipedia.org/wiki/Fractionating_column"
@@ -37,10 +48,6 @@
 				height="400"/>
 			</div>
 
-			<div class="submit">
-				<form action="" method="post">
-					<button name="submit" value="calculate">Calculate</button>
-				</form>			
 			</div>
 
 
