@@ -6,6 +6,7 @@
 
 # Basic Flask functionality, importing modules for parsing results and accessing MySQL. 
 
+from calendar import c
 from flask import Flask, render_template, request, json, flash, redirect, url_for, g
 from flask_login import login_user, logout_user, current_user
 import pandas as pd
@@ -20,7 +21,8 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 
 from database.extensions import db, login_manager
-from database.commands import upload_component, upload_vle, get_vle
+from database.commands import upload_component, upload_vle, get_vle_from_components
+from database.commands import get_user_vle_dict, delete_user_data
 from database.models import User, Component, VleData
 
 # Set up application and the necessary environment variables
@@ -49,6 +51,7 @@ def load_user(user_id):
 def index():
     # Query for components list in alphabetical order
     components = Component.query.order_by(Component.name).all()
+    vle_table = VleData.query.order_by(VleData.id).all()
     
     if request.method == 'POST':
         # xF = 0.044504
@@ -66,7 +69,7 @@ def index():
         # Get vle data and query for it
         component1_id = request.form['component1']
         component2_id = request.form['component2']
-        VLE_data = get_vle(component1_id, component2_id)
+        VLE_data = get_vle_from_components(component1_id, component2_id)
         
         # Create plot based on inputs
         vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, R, q) 
@@ -142,7 +145,7 @@ def logout():
 
 
 # -------------------------------------------------------------------------------------------------
-# Upload data
+# Upload - CREATE into database
 # -------------------------------------------------------------------------------------------------
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -188,6 +191,12 @@ def upload():
                 flash('Data for this combination of components already exists')
                 return render_template('upload.html')
 
+            # Check that data for this combo of components does not exist
+            if (VleData.query.filter_by(component1_id=component2_id).\
+                filter_by(component1_id=component2_id).first()):
+                flash('Data for this combination of components already exists')
+                return render_template('upload.html')
+
             # Perform query to insert data to postgresql
             upload_vle(data, component1_id, component2_id, current_user.get_id())
 
@@ -196,6 +205,32 @@ def upload():
 
 
     return render_template('upload.html')
+
+
+# -------------------------------------------------------------------------------------------------
+# User profile - DELETE from database
+# -------------------------------------------------------------------------------------------------
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    user_vle = get_user_vle_dict(current_user.get_id()) 
+
+    if request.method == 'POST':
+        # Get form data
+        try: 
+            component_ids = request.form['uploaded-data']
+        except:
+            flash("Please select your components")
+            return render_template('profile.html', user_vle=user_vle)
+
+        # Transform data into integers that are component ids
+        component1_id, component2_id = int(component_ids[1]), int(component_ids[4])
+        delete_user_data(component1_id, component2_id, current_user.get_id())
+
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', user_vle=user_vle)
+
+
 
 
 if __name__ == "__main__":

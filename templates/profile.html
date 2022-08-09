@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+	<div class="fixed-page">
+		<div class="page-content">
+			<div class="dist-child">
+				<form method="POST" id="distill-form" action="">
+					<fieldset>
+						<label for="uploaded-data">Uploaded Data</label><br>
+						<select name="uploaded-data" id="uploaded-data">
+							<option disabled selected value=""> Select Data </option>
+							{% for key in user_vle %}
+								<option value="{{ key }}">{{ user_vle[key] }}</option>
+							{% endfor %}
+						</select><br><br>
+						<button name="submit" value="delete">Delete Data</button>
+					</fieldset>
+			</form>
+
+		</div>
+	</div>	
+</div>
+
+{% endblock %}
