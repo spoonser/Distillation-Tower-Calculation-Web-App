@@ -9,7 +9,10 @@
 			<div class="dist-child">
 				<label for="components">Components of Distillation</label><br>
 				<select name="components" id="components">
-					<option value="no-components"> ------------------- </option>
+					<option disabled selected value=""> Select First Component </option>
+					{% for component in components %}
+						<option value={{ component.id }}>{{ component.name }}</option>
+					{% endfor %}
 
 				</select><br><br>
 				<label for="mole_frac_feed">Mole Fraction in Feed (X<sub>F</sub>)</label><br>

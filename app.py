@@ -47,6 +47,8 @@ def load_user(user_id):
 # -------------------------------------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    components = Component.query.all()
+    
     if request.method == 'POST':
         xF = 0.044504
         xB = 0.0119526405
@@ -58,10 +60,11 @@ def index():
             return index()
         else:
             plot = '<img class="img-responsive" src="data:image/png;base64,{}">'.format(vle_plot_url)
-            return render_template('index.html', plot=plot, graph_requested=True, nstage=nstage)
+            return render_template('index.html', plot=plot, graph_requested=True,
+                                    nstage=nstage, components=components)
 
     # Load page normally
-    return render_template('index.html')   
+    return render_template('index.html', components=components)   
 
 
 # -------------------------------------------------------------------------------------------------
@@ -137,7 +140,8 @@ def upload():
             component2 = request.form['component2']
             
             # Don't bother querying if component1 and component2 aren't distinct
-            if component1 == component2:
+            # or they don't exist
+            if component1 == component2 or component1 == '' or component2 == '':
                 flash('Components must be different from eachother!')
                 return render_template('upload.html')
 
