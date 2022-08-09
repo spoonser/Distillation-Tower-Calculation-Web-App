@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
     <!-- Bootstrap core  -->
     <link href="{{ url_for('static', filename='bootstrap-theme.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>{% block title %}{% endblock %} - Analytics Application </title>
 
     <!-- Format flashed messages -->
@@ -49,8 +50,7 @@
   
     <div class="page-wrapper">
       <div class="center">
-        <div class="center-child">
-
+        <div class="center-child"
           <div>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -69,6 +69,7 @@
 
           {% block content %}
           {% endblock %}
+        </div>  
       </div>
     </div>
   

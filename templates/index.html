@@ -5,9 +5,9 @@
 {% endblock %}
 {% block content %}
 	<div class="fixed-page">
-		<div class="page-content">
+		<div id="index-content">
 			<div class="dist-child">
-				<form method="POST" id="distill-form" action="">
+				<form method="POST" id="dist-form" action="">
 					<fieldset>
 						<label for="components">Components of Distillation</label><br>
 						<select name="component1" id="component1">
@@ -38,9 +38,10 @@
 						<label for="quality">Quality (q)</label><br>
 						<input type="text" id="quality" name="quality"><br><br>
 						<button name="submit" value="calculate">Calculate</button>
-					</div>
-				</fieldset>
-			</form>
+
+					</fieldset>
+				</form>
+			</div>
 
 			<div class="dist-child">
 				<img id="dist-diagram" src="{{url_for('static', filename='images/dist_column.png')}}" alt="https://en.wikipedia.org/wiki/Fractionating_column"
@@ -48,9 +49,7 @@
 				height="400"/>
 			</div>
 
-			</div>
-
-
+		</div>
 
 			<!-- Modal for displaying graph -->
 			<div id="graph-modal" class="modal" tabindex="-1" role="dialog">
@@ -84,7 +83,6 @@
 				{% endif %}
 			</script>
 
-		</div>
 	</div>	
 
 {% endblock %}
