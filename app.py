@@ -27,10 +27,18 @@ from database.models import User, Component, VleData
 
 # Set up application and the necessary environment variables
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'NOT_A_SECRET'
 
+# production or dev DB
+try:
+    prodURI = os.getenv('DATABASE_URL')
+    prodURI = prodURI.replace("postgres://", "postgresql://")
+    app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
+
+except:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///distillation'
+
+# Turn off modification tracking
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Connect to database
 db.init_app(app)
 # Initialize login manager for the application
