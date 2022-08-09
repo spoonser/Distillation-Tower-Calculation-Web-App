@@ -20,7 +20,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 
 from database.extensions import db, login_manager
-from database.setup import drop_and_create_tables, upload_component, upload_vle
+from database.commands import upload_component, upload_vle, get_vle
 from database.models import User, Component, VleData
 
 # Set up application and the necessary environment variables
@@ -47,7 +47,8 @@ def load_user(user_id):
 # -------------------------------------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    components = Component.query.all()
+    # Query for components list in alphabetical order
+    components = Component.query.order_by(Component.name).all()
     
     if request.method == 'POST':
         xF = 0.044504
@@ -55,7 +56,9 @@ def index():
         xD = 0.855676706
         q = 1.0618231177199156
 
-        vle_plot_url, nstage = vle.do_graph('ethanol-water.csv', xF, xD, xB, 3, q) 
+        VLE_data = get_vle(1, 5)
+
+        vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, 3, q) 
         if vle_plot_url == "Error":
             return index()
         else:
@@ -164,28 +167,18 @@ def upload():
                 axis=1
             ) 
 
-            # Insert data, ensuring the lower component id is in the first
-            # column of the vle_data table
+            # Get component ids
             component1_id = Component.query.filter_by(name=component1).first().id
             component2_id = Component.query.filter_by(name=component2).first().id
 
-            if component1_id < component2_id:
-                # Check that data for this combo of components does not exist
-                if (VleData.query.filter_by(component1_id=component1_id).\
-                    filter_by(component2_id=component2_id).first()):
-                    flash('Data for this combination of components already exists')
-                    return render_template('upload.html')
+            # Check that data for this combo of components does not exist
+            if (VleData.query.filter_by(component1_id=component1_id).\
+                filter_by(component2_id=component2_id).first()):
+                flash('Data for this combination of components already exists')
+                return render_template('upload.html')
 
-                upload_vle(data, component1_id, component2_id, current_user.get_id())
-            else:
-                # Check that data for this combo of components does not exist
-                # Check that data for this combo of components does not exist
-                if (VleData.query.filter_by(component1_id=component2_id).\
-                    filter_by(component1_id=component1_id).first()):
-                    flash('Data for this combination of components already exists')
-                    return render_template('upload.html')
-
-                upload_vle(data, component2_id, component1_id, current_user.get_id())
+            # Perform query to insert data to postgresql
+            upload_vle(data, component1_id, component2_id, current_user.get_id())
 
             flash("Data successfully uploaded!")
             return redirect(url_for('upload'))

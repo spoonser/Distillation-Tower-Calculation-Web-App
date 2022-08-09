@@ -18,17 +18,13 @@ import io
 import base64
 
 # Import data
-def import_data(data):
+def get_data(vle_data):
 	"""
 	Imports Vapor-Liquid equilibrium curve data from source
 	"""
-	# Grab data from csv file
-	VLE_Data = pd.read_csv(data)
-	VLE_Data = VLE_Data.values
-
-	# Grab the first and second columns
-	x_sep = VLE_Data[:, 0]
-	y_sep = VLE_Data[:, 1]
+	# Grab the first and second columns of data separately
+	x_sep = vle_data.loc[:, 0]
+	y_sep = vle_data.loc[:, 1]
 
 	coefs = poly.polyfit(x_sep, y_sep, 10)
 	x_new = [1 / 5000 * i for i in range(5000)]
@@ -169,12 +165,12 @@ def calc_nstages(nstage, efficiency):
 	return math.ceil(nstage/efficiency)
 
 
-def do_graph(VLE_data, xF, xD, xB, R, q):
+def do_graph(vle_data, xF, xD, xB, R, q):
 	"""
 	Performs the VLE calculations using the VLE data and parameters provided
 	"""
 	# Get the x and y component separation data
-	x_sep, y_sep = import_data(VLE_data)
+	x_sep, y_sep = get_data(vle_data)
 
 	# Initialize the graph
 	init_graph(x_sep, y_sep)
