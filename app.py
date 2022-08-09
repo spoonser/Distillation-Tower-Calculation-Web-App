@@ -27,8 +27,7 @@ from database.models import User, Component, VleData
 
 # Set up application and the necessary environment variables
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///distillation'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'NOT_A_SECRET'
 
@@ -54,11 +53,6 @@ def index():
     vle_table = VleData.query.order_by(VleData.id).all()
     
     if request.method == 'POST':
-        # xF = 0.044504
-        # xB = 0.0119526405
-        # xD = 0.855676706
-        # q = 1.0618231177199156
-
         # Get data from form
         xF = float(request.form['mole_frac_feed'])
         xD = float(request.form['mole_frac_dist'])
