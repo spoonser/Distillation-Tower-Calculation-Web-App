@@ -39,6 +39,7 @@ except:
 
 # Turn off modification tracking
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 # Connect to database
 db.init_app(app)
 # Initialize login manager for the application
@@ -102,8 +103,12 @@ def register():
         )
 
         # Commit new user to the database
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            flash("Could not create user")
+            return render_template('register.html')
 
         flash('Successfully created user {}'.format(name))
         return redirect(url_for('login'))
