@@ -156,7 +156,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0 auto;
   width: 500px;
   z-index:99;
-  animation: fadeOut 4s;
+  animation: fadeOut 5s;
 }
 
 @keyframes fadeOut {
@@ -228,5 +228,5 @@ input[type=number]::-webkit-outer-spin-button {
   margin-bottom: auto;
   margin-left: auto;
   margin-right: 30px;
-  width: 960px;
+  width: 900px;
 }

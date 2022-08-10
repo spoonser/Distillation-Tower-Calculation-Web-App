@@ -62,17 +62,28 @@ def index():
     vle_table = VleData.query.order_by(VleData.id).all()
     
     if request.method == 'POST':
+        # Reset page if anything is not in the form
+        if ('component1' not in request.form or 'component2' not in request.form
+            or 'mole_frac_feed' not in request.form
+            or 'mole_frac_dist' not in request.form
+            or 'mole_frac_bot' not in request.form
+            or 'reflux ratio' not in request.form
+            or 'quality' not in request.form):
+            flash('Please enter a value for all items in the distillation calculator')
+            return render_template('index.html', components=components)
+
+        # Get vle data and query for it
+        component1_id = request.form['component1']
+        component2_id = request.form['component2']
+
+        VLE_data = get_vle_from_components(component1_id, component2_id)
+
         # Get data from form
         xF = float(request.form['mole_frac_feed'])
         xD = float(request.form['mole_frac_dist'])
         xB = float(request.form['mole_frac_bot'])
         R = float(request.form['reflux_ratio'])
         q = float(request.form['quality'])
-
-        # Get vle data and query for it
-        component1_id = request.form['component1']
-        component2_id = request.form['component2']
-        VLE_data = get_vle_from_components(component1_id, component2_id)
         
         # Create plot based on inputs
         vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, R, q) 
