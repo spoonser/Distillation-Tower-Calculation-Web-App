@@ -67,7 +67,7 @@ def index():
             or 'mole_frac_feed' not in request.form
             or 'mole_frac_dist' not in request.form
             or 'mole_frac_bot' not in request.form
-            or 'reflux ratio' not in request.form
+            or 'reflux_ratio' not in request.form
             or 'quality' not in request.form):
             flash('Please enter a value for all items in the distillation calculator')
             return render_template('index.html', components=components)
@@ -88,7 +88,8 @@ def index():
         # Create plot based on inputs
         vle_plot_url, nstage = vle.do_graph(VLE_data, xF, xD, xB, R, q) 
         if vle_plot_url == "Error":
-            return index()
+            flash('Parameters resulted in invalid calculation, enter new values')
+            return render_template('index.html', components=components)
         else:
             plot = '<img class="img-responsive" src="data:image/png;base64,{}">'.format(vle_plot_url)
             return render_template('index.html', plot=plot, graph_requested=True,
